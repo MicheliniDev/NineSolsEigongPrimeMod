@@ -2,11 +2,11 @@
 schemaVersion = "0.0.1"
 
 [package]
-namespace = "yournamespace"
+namespace = "Gregorio"
 name = "EigongPrime"
-versionNumber = "0.1.0"
+versionNumber = "1.0.0"
 description = "Mods Eigong to chains moves a lot more frequently and relentlessly. She's tankier and some moves from other phases appear earlier"
-websiteUrl = "link to the git repo"
+websiteUrl = "https://github.com/MicheliniDev/NineSolsEigongPrimeMod"
 containsNsfwContent = false
 
 [package.dependencies]

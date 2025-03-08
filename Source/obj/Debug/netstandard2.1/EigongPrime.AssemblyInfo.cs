@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Mods Eigong to be harder, she chains moves a lot more now and the talisman follow" +
     " ups now show up on phase 1")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1eb96ab5f7f48993c2a6a289349d4785a289dce4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff86b8ddb45fea224cf439cb84b495ede03c711a")]
 [assembly: System.Reflection.AssemblyProductAttribute("EigongPrime")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EigongPrime")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
