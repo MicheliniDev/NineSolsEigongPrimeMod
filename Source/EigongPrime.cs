@@ -217,14 +217,14 @@ public class EigongPrime : BaseUnityPlugin {
             { SlowStartPhase2LinkStateWeight, new AttackWeight[] { Foo, Unsheathe, TeleportToTop, FooGeyser, FooSpike } },
             { CrossUpPhase2LinkStateWeight, new AttackWeight[] { Unsheathe, Foo, TeleportToBack, TeleportForward, FooSpike } },
             { CrimsonSlamPhase2LinkStateWeight, new AttackWeight[] { CrossUp, Pokes, TeleportToTop, Dunk, TeleportToBack, TeleportForward, FooGeyser, FooSpike, WindBlade} },
-            { FooFollowUp0LinkStateWeight, new AttackWeight[] {  Dunk, TeleportToTop, Unsheathe, QuickFoo} },
+            { FooFollowUp1LinkStateWeight, new AttackWeight[] { TeleportToTop, Unsheathe, QuickFoo} },
             { UnsheathePhase2LinkStateWeight, new AttackWeight[] { Unsheathe, TeleportToTop, Dunk, Pokes, CrossUp, FooGeyser, FooSpike } },
             { WindBladeLinkStateWeight, new AttackWeight[] { QuickFoo, TeleportToBack} },
             //Phase 3
             { StunPhase3LinkStateWeight, new AttackWeight[] { QuickFoo, TeleportToTop, FooGeyser, FooSpike, WindBlade, TeleportForward, TeleportToBack } },
             { TeleportToBackPhase3LinkStateWeight, new AttackWeight[] { Unsheathe, SlowStart, CrossUp, Pokes, TeleportToTop } },
             { TeleportForwardPhase3LinkStateWeight, new AttackWeight[] { CrossUp, Pokes, SlowStart} },
-            { WindBladePhase3LinkStateWeight, new AttackWeight[] { QuickFoo, TeleportToBack} },
+            { WindBladePhase3LinkStateWeight, new AttackWeight[] { QuickFoo, TeleportToBack, TeleportForward} },
             { UnsheathePhase3LinkStateWeight, new AttackWeight[] { Unsheathe, TeleportToTop, Dunk, Pokes, CrossUp, SlowStart } },
             { JudgementCutLinkStateWeight, new AttackWeight[] { CrimsonJudgementCut,TeleportToTop, CrossUp, Dunk, FooGeyser, FooSpike } },
             { RegularJudgementCutLinkStateWeight, new AttackWeight[] { CrimsonJudgementCut, TeleportToTop, CrossUp, Dunk, FooGeyser, FooSpike } }
