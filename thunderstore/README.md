@@ -1,3 +1,46 @@
 # Eigong Prime
 
-Mods Eigong to be harder, she will chain moves a lot more frequently and relentlessly. Also phase 1 can now use the talisman follow ups presente in phase 2 and 3 and phases 2 and 3 can chain Pokes just like phase 1
+A mod that makes Eigong harder by increasesing the amount of moves she can choose when stringing to another move
+
+For players who like Eigong's moveset :P
+
+# Changes
+
+## General
+- Phase 1 HP increased from 5000 to 8000
+- Phase 2 HP increased from 9000 to 16000
+- Phase 3 HP increased from 5000 to 12000
+- Phase 1 now has access to the talisman follow ups present in phase 2
+- Phases 2 and 3 can now chain Pokes like phase 1
+
+## Phase 1 Moveset changes
+- Stun state can also chain to Teleport To Back, Crimson Slam and Unsheathe
+- Teleport To Back can now also chain to Unsheathe, Slow Start, Cross Up, Pokes and Crimson Slam
+- Teleport Forward can now also chain to Cross Up, Pokes and Teleport To Back
+- Slow Start can now also chain to Talisman, Unsheathe and Crimson Slam
+- Pokes can now also chain to Talisman, Talisman Geyser and Talisman Spike
+- Cross Up can now also chain to Unsheathe, Talisman and Teleport Forward
+- Crimson Slam can now also chain to Cross Up, Pokes, Talisman, Crimson Slam, Crimson Ball, Teleport To Back and Teleport Forward
+- Unsheathe can now also chain to Unsheathe, Teleport To Top, Pokes and Cross Up
+- Crimson Ball can now also chain to Crimson Slam and Unsheathe
+
+## Phase 2 Moveset changes
+- Stun state can also chain to Quick Talisman, Crimson Slam, Talisman Geyser, Talisman Spike and Teleport To Back
+- Wind Blade can now also cycle through 2 extra moves: Quick Talisman and Teleport To Back
+- Teleport To Back can now also chain to Unsheathe, Slow Start, Cross Up, Pokes, Crimson Slam, WindBlade, Talisman Geyser and Talisman Spike
+- Teleport Forward can now also chain to Cross Up, Pokes, Slow Start, Talisman Geyser and Talisman Spike
+- Pokes can also chain to Pokes, Talisman Spike, Talisman Geyser, Talisman, SlowStart and TeleportToBack
+- Slow Start can now also chain to Talisman, Unsheathe, Teleport To Top, Talisman Geyser and Talisman Spike
+- Cross Up can now also chain to Unsheathe, Talisman, Teleport To Back, Teleport Forward and TalismanSpike
+- Crimson Slam can now also chain to Cross Up, Pokes, Teleport To Top, Crimson Ball, Teleport To Back, Teleport Forward, Talisman Geyser, Talisman Spike and WindBlade
+- Talisman Geyser can now also chain to Crimson Slam, TeleportToTop and Unsheathe and Quick Talisman
+- Unsheathe can now also chain to Unsheathe, TeleportToTop, Crimson Ball, Pokes, CrossUp, Talisman Geyser and Talisman Spike 
+
+## Phase 3 Moveset changes
+- Stun State can also chain to Quick Talisman, Crimson Slam, Talisman Geyser, Talisman Spike, Wind Blade, Teleport Forward and Teleport To Back
+- Teleport To Back can now also chain to Unsheathe, SlowStart, CrossUp, Pokes and Crimson Slam
+- Teleport Forward can now also chain to Cross Up, Pokes and SlowStart
+- Unsheathe can now also chain Crimson Slam, Teleport To Top, Crimson Ball, Pokes, CrossUp and Slow Start 
+- Crimson Judgement Cut can now also chain to Crimson Judgement Cut, Teleport To Top, Cross Up, Crimson Ball, Talisman Geyser and Taliman Spike 
+- Regular Judgement Cut can now also chain to Crimson Judgement Cut, Teleport To Top, Cross Up, Crimson Ball, Talisman Geyser and Talisman Spike
+

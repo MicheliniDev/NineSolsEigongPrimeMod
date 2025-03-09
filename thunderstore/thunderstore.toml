@@ -4,14 +4,14 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "Gregorio"
 name = "EigongPrime"
-versionNumber = "1.0.0"
+versionNumber = "1.1.0"
 description = "Mods Eigong to chains moves a lot more frequently and relentlessly. She's tankier and some moves from other phases appear earlier"
 websiteUrl = "https://github.com/MicheliniDev/NineSolsEigongPrimeMod"
 containsNsfwContent = false
 
 [package.dependencies]
 "BepInEx-BepInExPack" = "5.4.2100"
-"ninesolsmodding-NineSolsAPI" = "0.0.2"
+"ninesolsmodding-NineSolsAPI" = "1.2.1"
 
 [build]
 icon = "./icon.png"
