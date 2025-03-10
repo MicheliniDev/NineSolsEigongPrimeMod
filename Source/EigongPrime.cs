@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using BepInEx;
-using BepInEx.Configuration;
 using HarmonyLib;
-using Mono.Cecil;
 using NineSolsAPI;
-using RCGMaker.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BepInEx.Configuration;
+using UnityEngine.Pool;
 
 namespace EigongPrime;
 
@@ -17,18 +14,7 @@ namespace EigongPrime;
 public class EigongPrime : BaseUnityPlugin {
     private Harmony harmony = null!;
 
-    #region Sprite Recoloring
-    private GameObject eigongSpriteHolder = null!;
-    private _2dxFX_ColorChange eigongCurrentHueValue = null!;
-
-    private GameObject eigongSwordSpriteHolder = null!;
-    private _2dxFX_ColorChange eigongSwordCurrentHueValue = null!;
-
-    private GameObject eigongFooSpriteHolder = null!;
-    private _2dxFX_ColorChange eigongFooCurrentHueValue = null!;
-    #endregion
-    private int dontspamstuffwow2 = 0;
-    private int dontspamstuffwow = 0;
+    private ColorChange colorChange = new ColorChange();
 
     private string eigongAttackStatesPath = "";
 
@@ -83,7 +69,6 @@ public class EigongPrime : BaseUnityPlugin {
     BossGeneralState TeleportToTopBossGeneralState = null!;
     BossGeneralState TeleportForwardBossGeneralState = null!;
     BossGeneralState TeleportToBackBossGeneralState = null!;
-
     //Phase 1 Attacks
     BossGeneralState SlowStartBossGeneralState = null!;
     BossGeneralState UnsheatheBossGeneralState = null!;
@@ -102,28 +87,57 @@ public class EigongPrime : BaseUnityPlugin {
     //Phase 3 Attacks
     BossGeneralState JudgementCutBossGeneralState = null!;
     BossGeneralState RegularJudgementCutBossGeneralState = null!;
+
+    private GameObject fireTrail = null!;
     #endregion
+
+    private int dontspamstuffwow = 0;
+    private int dontspamstuff = 0;
+
+    private ConfigEntry<float> EigongAnimatorSpeed = null!;
+    private ConfigEntry<float> EigongHPScale = null!;
     public void Awake() {
         Log.Init(Logger);
         RCGLifeCycle.DontDestroyForever(gameObject);
         harmony = Harmony.CreateAndPatchAll(typeof(EigongPrime).Assembly);
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+
+        EigongAnimatorSpeed = Config.Bind("General", "EigongSpeed", 1f, "The speed at which Eigong's attacks occur");
+        EigongHPScale = Config.Bind("General", "EigongHPScale", 1f, "The scale for Eigong's HP, 1 is regular HP amount");
     }
 
     public void Update() {
         if (SceneManager.GetActiveScene().name == "A11_S0_Boss_YiGung") {
-            var baseHealthRef = AccessTools.FieldRefAccess<MonsterStat, float>("BaseHealthValue");
-            baseHealthRef(MonsterManager.Instance.ClosetMonster.monsterStat) = 8000f;
-            if (dontspamstuffwow == 0 && MonsterManager.Instance.ClosetMonster != null) {
-                MonsterManager.Instance.ClosetMonster.postureSystem.CurrentHealthValue = 8000f;
-                dontspamstuffwow++;
-            }
-            MonsterManager.Instance.ClosetMonster.monsterStat.Phase2HealthRatio = 2;
-            MonsterManager.Instance.ClosetMonster.monsterStat.Phase3HealthRatio = 1.5f;
-            RecolorSprite();
+            EigongHPChange();
+            colorChange.RecolorSprite();
             GetAttackGameObjects();
             AlterAttacks();
+
+            MonsterManager.Instance.ClosetMonster.monsterCore.AnimationSpeed = EigongAnimatorSpeed.Value;
+
+            if (MonsterManager.Instance.ClosetMonster.currentMonsterState == TeleportForwardBossGeneralState && MonsterManager.Instance.ClosetMonster.PhaseIndex != 0) {
+                fireTrail.SetActive(false);
+            }
+            else {
+                fireTrail.SetActive(true);
+            }
         }
+        else {
+            colorChange.dontspamstuffwow2 = 0;
+            dontspamstuff = 0;
+        }
+    }
+
+    private void EigongHPChange() {
+        var baseHealthRef = AccessTools.FieldRefAccess<MonsterStat, float>("BaseHealthValue");
+        baseHealthRef(MonsterManager.Instance.ClosetMonster.monsterStat) = 8000f * EigongHPScale.Value;
+        if (dontspamstuffwow == 0 && MonsterManager.Instance.ClosetMonster != null) {
+            MonsterManager.Instance.ClosetMonster.postureSystem.CurrentHealthValue = 8000f * EigongHPScale.Value;
+            if (EigongHPScale.Value != 1f) ToastManager.Toast($"Eigong's base HP changed to {8000f * EigongHPScale.Value}");
+            dontspamstuffwow++;
+        }
+        MonsterManager.Instance.ClosetMonster.monsterStat.Phase2HealthRatio = 2;
+        MonsterManager.Instance.ClosetMonster.monsterStat.Phase3HealthRatio = 1.5f;
     }
 
     public void AlterAttacks() {
@@ -217,7 +231,7 @@ public class EigongPrime : BaseUnityPlugin {
             { SlowStartPhase2LinkStateWeight, new AttackWeight[] { Foo, Unsheathe, TeleportToTop, FooGeyser, FooSpike } },
             { CrossUpPhase2LinkStateWeight, new AttackWeight[] { Unsheathe, Foo, TeleportToBack, TeleportForward, FooSpike } },
             { CrimsonSlamPhase2LinkStateWeight, new AttackWeight[] { CrossUp, Pokes, TeleportToTop, Dunk, TeleportToBack, TeleportForward, FooGeyser, FooSpike, WindBlade} },
-            { FooFollowUp1LinkStateWeight, new AttackWeight[] { TeleportToTop, Unsheathe, QuickFoo} },
+            { FooFollowUp1LinkStateWeight, new AttackWeight[] { TeleportToTop, Unsheathe, QuickFoo, FooGeyser, FooSpike} },
             { UnsheathePhase2LinkStateWeight, new AttackWeight[] { Unsheathe, TeleportToTop, Dunk, Pokes, CrossUp, FooGeyser, FooSpike } },
             { WindBladeLinkStateWeight, new AttackWeight[] { QuickFoo, TeleportToBack} },
             //Phase 3
@@ -244,104 +258,90 @@ public class EigongPrime : BaseUnityPlugin {
     }
 
     public void GetAttackGameObjects() {
-        eigongAttackStatesPath = "GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/Attacks/";
+        if (dontspamstuff == 0) {
+            eigongAttackStatesPath = "GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/Attacks/";
 
-        StunLinkStateWeight = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying/weight").GetComponent<LinkNextMoveStateWeight>();
-        StunPhase2LinkStateWeight = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying/weight (1)").GetComponent<LinkNextMoveStateWeight>();
-        StunPhase3LinkStateWeight = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying/weight (2)").GetComponent<LinkNextMoveStateWeight>();
-        
-        #region Attacks LinkStateWeight
-        //Teleports
-        TeleportToTopLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top/phase (0)").GetComponent<LinkNextMoveStateWeight>();
-        TeleportToTopPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top/phase (1)").GetComponent<LinkNextMoveStateWeight>();
-        TeleportToTopPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top/phase (2)").GetComponent<LinkNextMoveStateWeight>();
-        
-        TeleportForwardLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward/weight").GetComponent<LinkNextMoveStateWeight>();
-        TeleportForwardPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward/weight (1)").GetComponent<LinkNextMoveStateWeight>();
-        TeleportForwardPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward/weight (2)").GetComponent<LinkNextMoveStateWeight>();
+            StunLinkStateWeight = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying/weight").GetComponent<LinkNextMoveStateWeight>();
+            StunPhase2LinkStateWeight = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying/weight (1)").GetComponent<LinkNextMoveStateWeight>();
+            StunPhase3LinkStateWeight = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying/weight (2)").GetComponent<LinkNextMoveStateWeight>();
 
-        TeleportToBackLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back/weight").GetComponent<LinkNextMoveStateWeight>();
-        TeleportToBackPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back/weight (1)").GetComponent<LinkNextMoveStateWeight>();
-        TeleportToBackPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back/weight (2)").GetComponent<LinkNextMoveStateWeight>();
-        
-        //Phase 1 Attacks
-        SlowStartLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[1] Starter  Slow Attack 慢刀前揮/phase (0)").GetComponent<LinkNextMoveStateWeight>();
-        PokeLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[13] Tripple Poke 三連/weight").GetComponent<LinkNextMoveStateWeight>();
-        CrossUpLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[6] Double Attack/LinkMoveGroupingNode2 StarterPose/phase (0)").GetComponent<LinkNextMoveStateWeight>();
-        UnsheatheLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃/phase (0)").GetComponent<LinkNextMoveStateWeight>();
-        FooCharmLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab/interrupt weight").GetComponent<LinkNextMoveStateWeight>();
-        CrimsonSlamLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[17] DownAttack Danger 空中下危/weight").GetComponent<LinkNextMoveStateWeight>();
-        DunkLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[14] FooExplode Smash 下砸紅球/phase0 (1)").GetComponent<LinkNextMoveStateWeight>();
+            #region Attacks LinkStateWeight
+            //Teleports
+            TeleportToTopLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top/phase (0)").GetComponent<LinkNextMoveStateWeight>();
+            TeleportToTopPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top/phase (1)").GetComponent<LinkNextMoveStateWeight>();
+            TeleportToTopPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top/phase (2)").GetComponent<LinkNextMoveStateWeight>();
 
-        //Phase 2 Attacks
-        SlowStartPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[1] Starter  Slow Attack 慢刀前揮/phase (1)").GetComponent<LinkNextMoveStateWeight>();
-        PokePhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[13] Tripple Poke 三連/weight (1)").GetComponent<LinkNextMoveStateWeight>();
-        CrossUpPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[6] Double Attack/LinkMoveGroupingNode2 StarterPose/phase (1)").GetComponent<LinkNextMoveStateWeight>();
-        UnsheathePhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃/phase (1)").GetComponent<LinkNextMoveStateWeight>();
-        FooCharmPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab/interrupt weight (1)").GetComponent<LinkNextMoveStateWeight>();
-        FooFollowUp0LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[4] Slash Up 上撈下打 大反危/phase (1)").GetComponent<LinkNextMoveStateWeight>();
-        FooFollowUp1LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[12] UpSlash Down Danger/weight (1)").GetComponent<LinkNextMoveStateWeight>();
-        CrimsonSlamPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[17] DownAttack Danger 空中下危/weight (1)").GetComponent<LinkNextMoveStateWeight>();
-        WindBladeLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[11] GiantChargeWave 紅白白紅/weight (2)").GetComponent<LinkNextMoveStateWeight>();
+            TeleportForwardLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward/weight").GetComponent<LinkNextMoveStateWeight>();
+            TeleportForwardPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward/weight (1)").GetComponent<LinkNextMoveStateWeight>();
+            TeleportForwardPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward/weight (2)").GetComponent<LinkNextMoveStateWeight>();
 
-        //Phase 3 Attacks
-        FooCharmPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab/interrupt weight (2)").GetComponent<LinkNextMoveStateWeight>();
-        WindBladePhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[11] GiantChargeWave 紅白白紅/weight (3)").GetComponent<LinkNextMoveStateWeight>();
-        UnsheathePhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃/phase (2)").GetComponent<LinkNextMoveStateWeight>();
-        JudgementCutLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[19] Thrust Full Screen Slash/LinkMoveGroupingNode Timing 2 Ground/weight (2)").GetComponent<LinkNextMoveStateWeight>();
-        RegularJudgementCutLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[20] TeleportOut/weight (2)").GetComponent<LinkNextMoveStateWeight>();
-        #endregion
-        
-        #region Attacks BossGeneralState
-        stunBossGeneralState = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying").GetComponent<BossGeneralState>();
-        //Teleports
-        TeleportToTopBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top").GetComponent<BossGeneralState>();
-        TeleportForwardBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward").GetComponent<BossGeneralState>();
-        TeleportToBackBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back").GetComponent<BossGeneralState>();
-        
-        //Phase 1 Attacks
-        SlowStartBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[1] Starter  Slow Attack 慢刀前揮").GetComponent<BossGeneralState>();
-        UnsheatheBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃").GetComponent<BossGeneralState>();
-        CrossUpBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[6] Double Attack").GetComponent<BossGeneralState>();
-        triplePokeBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[13] Tripple Poke 三連").GetComponent<BossGeneralState>();
-        FooCharmBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab").GetComponent<BossGeneralState>();
-        QuickFooBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[16] QuickFoo").GetComponent<BossGeneralState>();
-        DunkBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[14] FooExplode Smash 下砸紅球").GetComponent<BossGeneralState>();
-        CrimsonSlamBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[17] DownAttack Danger 空中下危").GetComponent<BossGeneralState>();
+            TeleportToBackLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back/weight").GetComponent<LinkNextMoveStateWeight>();
+            TeleportToBackPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back/weight (1)").GetComponent<LinkNextMoveStateWeight>();
+            TeleportToBackPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back/weight (2)").GetComponent<LinkNextMoveStateWeight>();
 
-        //Phase 2 Attacks
-        WindBladeBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[8] Long Charge (2階才有").GetComponent<BossGeneralState>();
-        FooFollowUp0BossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[4] Slash Up 上撈下打 大反危").GetComponent<BossGeneralState>();
-        FooFollowUp1BossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[12] UpSlash Down Danger").GetComponent<BossGeneralState>();
+            //Phase 1 Attacks
+            SlowStartLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[1] Starter  Slow Attack 慢刀前揮/phase (0)").GetComponent<LinkNextMoveStateWeight>();
+            PokeLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[13] Tripple Poke 三連/weight").GetComponent<LinkNextMoveStateWeight>();
+            CrossUpLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[6] Double Attack/LinkMoveGroupingNode2 StarterPose/phase (0)").GetComponent<LinkNextMoveStateWeight>();
+            UnsheatheLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃/phase (0)").GetComponent<LinkNextMoveStateWeight>();
+            FooCharmLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab/interrupt weight").GetComponent<LinkNextMoveStateWeight>();
+            CrimsonSlamLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[17] DownAttack Danger 空中下危/weight").GetComponent<LinkNextMoveStateWeight>();
+            DunkLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[14] FooExplode Smash 下砸紅球/phase0 (1)").GetComponent<LinkNextMoveStateWeight>();
 
-        //Phase 3 Attacks
-        JudgementCutBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[19] Thrust Full Screen Slash").GetComponent<BossGeneralState>();
-        RegularJudgementCutBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[20] TeleportOut").GetComponent<BossGeneralState>();
-        #endregion
-    }
+            //Phase 2 Attacks
+            SlowStartPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[1] Starter  Slow Attack 慢刀前揮/phase (1)").GetComponent<LinkNextMoveStateWeight>();
+            PokePhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[13] Tripple Poke 三連/weight (1)").GetComponent<LinkNextMoveStateWeight>();
+            CrossUpPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[6] Double Attack/LinkMoveGroupingNode2 StarterPose/phase (1)").GetComponent<LinkNextMoveStateWeight>();
+            UnsheathePhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃/phase (1)").GetComponent<LinkNextMoveStateWeight>();
+            FooCharmPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab/interrupt weight (1)").GetComponent<LinkNextMoveStateWeight>();
+            FooFollowUp0LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[4] Slash Up 上撈下打 大反危/phase (1)").GetComponent<LinkNextMoveStateWeight>();
+            FooFollowUp1LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[12] UpSlash Down Danger/weight (1)").GetComponent<LinkNextMoveStateWeight>();
+            CrimsonSlamPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[17] DownAttack Danger 空中下危/weight (1)").GetComponent<LinkNextMoveStateWeight>();
+            WindBladeLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[11] GiantChargeWave 紅白白紅/weight (2)").GetComponent<LinkNextMoveStateWeight>();
 
-    public void RecolorSprite() {
-        if (dontspamstuffwow2 == 0) {
-            eigongSpriteHolder = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/MonsterCore/Animator(Proxy)/Animator/View/YiGung/Body");
-            eigongSpriteHolder.AddComponent<_2dxFX_ColorChange>();
-            eigongCurrentHueValue = eigongSpriteHolder.GetComponent<_2dxFX_ColorChange>();
+            //Phase 3 Attacks
+            FooCharmPhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab/interrupt weight (2)").GetComponent<LinkNextMoveStateWeight>();
+            WindBladePhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[11] GiantChargeWave 紅白白紅/weight (3)").GetComponent<LinkNextMoveStateWeight>();
+            UnsheathePhase3LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃/phase (2)").GetComponent<LinkNextMoveStateWeight>();
+            JudgementCutLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[19] Thrust Full Screen Slash/LinkMoveGroupingNode Timing 2 Ground/weight (2)").GetComponent<LinkNextMoveStateWeight>();
+            RegularJudgementCutLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[20] TeleportOut/weight (2)").GetComponent<LinkNextMoveStateWeight>();
+            #endregion
 
-            eigongSwordSpriteHolder = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/MonsterCore/Animator(Proxy)/Animator/View/YiGung/Weapon/Sword/Sword Sprite");
-            eigongSwordSpriteHolder.AddComponent<_2dxFX_ColorChange>();
-            eigongSwordCurrentHueValue = eigongSwordSpriteHolder.GetComponent<_2dxFX_ColorChange>();
+            #region Attacks BossGeneralState
+            stunBossGeneralState = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/States/AttackParrying").GetComponent<BossGeneralState>();
+            //Teleports
+            TeleportToTopBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[2] Teleport To Top").GetComponent<BossGeneralState>();
+            TeleportForwardBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[7] Teleport Dash Forward").GetComponent<BossGeneralState>();
+            TeleportToBackBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[5] Teleport to Back").GetComponent<BossGeneralState>();
 
-            eigongFooSpriteHolder = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/MonsterCore/Animator(Proxy)/Animator/View/YiGung/Weapon/Foo/FooSprite");
-            eigongFooSpriteHolder.AddComponent<_2dxFX_ColorChange>();
-            eigongFooCurrentHueValue = eigongFooSpriteHolder.GetComponent<_2dxFX_ColorChange>();
-            dontspamstuffwow2++;
+            //Phase 1 Attacks
+            SlowStartBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[1] Starter  Slow Attack 慢刀前揮").GetComponent<BossGeneralState>();
+            UnsheatheBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[3] Thrust Delay 一閃").GetComponent<BossGeneralState>();
+            CrossUpBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[6] Double Attack").GetComponent<BossGeneralState>();
+            triplePokeBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[13] Tripple Poke 三連").GetComponent<BossGeneralState>();
+            FooCharmBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab").GetComponent<BossGeneralState>();
+            QuickFooBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[16] QuickFoo").GetComponent<BossGeneralState>();
+            DunkBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[14] FooExplode Smash 下砸紅球").GetComponent<BossGeneralState>();
+            CrimsonSlamBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[17] DownAttack Danger 空中下危").GetComponent<BossGeneralState>();
+
+            //Phase 2 Attacks
+            WindBladeBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[8] Long Charge (2階才有").GetComponent<BossGeneralState>();
+            FooFollowUp0BossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[4] Slash Up 上撈下打 大反危").GetComponent<BossGeneralState>();
+            FooFollowUp1BossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[12] UpSlash Down Danger").GetComponent<BossGeneralState>();
+
+            //Phase 3 Attacks
+            JudgementCutBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[19] Thrust Full Screen Slash").GetComponent<BossGeneralState>();
+            RegularJudgementCutBossGeneralState = GameObject.Find($"{eigongAttackStatesPath}[20] TeleportOut").GetComponent<BossGeneralState>();
+
+            //Adding component to chain attacks
+            if (DunkBossGeneralState.gameObject.GetComponent<LinkMoveExtendProvider>() == null) {
+                DunkBossGeneralState.gameObject.AddComponent<LinkMoveExtendProvider>();
+            }
+
+            //Fire Trail
+            fireTrail = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/MonsterCore/Animator(Proxy)/Animator/LogicRoot/Phase1 Activator/FireFX _ Fxplayer");
         }
-        eigongCurrentHueValue._HueShift = 130;
-        eigongSwordCurrentHueValue._HueShift = 250;
-        eigongFooCurrentHueValue._HueShift = 250;
-
-        if (Player.i.health.CurrentHealthValue <= 0f) {
-            dontspamstuffwow2 = 0;
-        }
+        #endregion
     }
 
     public void OnDestroy() {

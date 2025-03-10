@@ -2,6 +2,8 @@
 
 A mod that makes Eigong harder by increasesing the amount of moves she can choose when stringing to another move.
 
+Both Eigong's speed and base health values can be changed using BepInEx Configuration Manager, but the mod works fine without it. 
+
 For players who like Eigong's moveset :P
 
 # How to install
@@ -18,6 +20,7 @@ Then start up the game for it to generate the necessary files and folders. After
 - Phase 3 HP increased from 5000 to 12000.
 - Phase 1 now has access to the talisman follow ups present in phase 2.
 - Phases 2 and 3 can now chain Pokes like phase 1.
+- Removed the fire trail from forward dashing in phases 2 and 3
 
 ## Phase 1 Moveset changes
 - Stun state can also chain to Teleport To Back, Crimson Slam and Unsheathe.
@@ -28,7 +31,7 @@ Then start up the game for it to generate the necessary files and folders. After
 - Cross Up can now also chain to Unsheathe, Talisman and Teleport Forward.
 - Crimson Slam can now also chain to Cross Up, Pokes, Talisman, Crimson Slam, Crimson Ball, Teleport To Back and Teleport Forward.
 - Unsheathe can now also chain to Unsheathe, Teleport To Top, Pokes and Cross Up.
-- Crimson Ball can now also chain to Crimson Slam and Unsheathe.
+- Crimson Ball can now also chain to Crimson Slam, Unsheathe and Cross Up.
 
 ## Phase 2 Moveset changes
 - Stun state can also chain to Quick Talisman, Crimson Slam, Talisman Geyser, Talisman Spike and Teleport To Back.
@@ -39,7 +42,7 @@ Then start up the game for it to generate the necessary files and folders. After
 - Slow Start can now also chain to Talisman, Unsheathe, Teleport To Top, Talisman Geyser and Talisman Spike.
 - Cross Up can now also chain to Unsheathe, Talisman, Teleport To Back, Teleport Forward and TalismanSpike.
 - Crimson Slam can now also chain to Cross Up, Pokes, Teleport To Top, Crimson Ball, Teleport To Back, Teleport Forward, Talisman Geyser, Talisman Spike and Wind Blade.
-- Talisman Geyser can now also chain to Crimson Slam, TeleportToTop and Unsheathe and Quick Talisman.
+- Talisman Geyser can now also chain to Crimson Slam, Teleport To Top, Unsheathe, Quick Talisman, Talisman Geyser and Talisman Spike.
 - Unsheathe can now also chain to Unsheathe, TeleportToTop, Crimson Ball, Pokes, CrossUp, Talisman Geyser and Talisman Spike.
 
 ## Phase 3 Moveset changes
