@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|c:\\users\\gregorio\\documents\\eigongprime\\source\\colorchange.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|solutionrelative:source\\colorchange.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|c:\\users\\gregorio\\documents\\eigongprime\\source\\eigongprime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|solutionrelative:source\\eigongprime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|c:\\users\\gregorio\\documents\\eigongprime\\source\\colorchange.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|solutionrelative:source\\colorchange.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,30 +18,29 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "ColorChange.cs",
               "DocumentMoniker": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\ColorChange.cs",
               "RelativeDocumentMoniker": "Source\\ColorChange.cs",
               "ToolTip": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\ColorChange.cs",
               "RelativeToolTip": "Source\\ColorChange.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABOAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T19:21:10.158Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-10T19:21:10.158Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "EigongPrime.cs",
               "DocumentMoniker": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\EigongPrime.cs",
               "RelativeDocumentMoniker": "Source\\EigongPrime.cs",
               "ToolTip": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\EigongPrime.cs",
               "RelativeToolTip": "Source\\EigongPrime.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAQwBMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAIkAAAAAAAAAAAAwwOEAAABWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-08T23:31:25.334Z",
               "EditorCaption": ""

@@ -14,7 +14,7 @@ namespace EigongPrime;
 public class EigongPrime : BaseUnityPlugin {
     private Harmony harmony = null!;
 
-    private ColorChange colorChange = new ColorChange();
+    private ColorChange colorChange;
 
     private string eigongAttackStatesPath = "";
 
@@ -102,16 +102,22 @@ public class EigongPrime : BaseUnityPlugin {
         harmony = Harmony.CreateAndPatchAll(typeof(EigongPrime).Assembly);
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 
+        colorChange = new ColorChange();
+
         EigongAnimatorSpeed = Config.Bind("General", "EigongSpeed", 1f, "The speed at which Eigong's attacks occur");
         EigongHPScale = Config.Bind("General", "EigongHPScale", 1f, "The scale for Eigong's HP, 1 is regular HP amount");
     }
 
     public void Update() {
         if (SceneManager.GetActiveScene().name == "A11_S0_Boss_YiGung") {
-            EigongHPChange();
             colorChange.RecolorSprite();
+            EigongHPChange();
             GetAttackGameObjects();
             AlterAttacks();
+
+            if (Player.i.health.CurrentHealthValue <= 0f) {
+                colorChange.dontspamstuffwow2 = 0;
+            }
 
             MonsterManager.Instance.ClosetMonster.monsterCore.AnimationSpeed = EigongAnimatorSpeed.Value;
 
@@ -123,7 +129,6 @@ public class EigongPrime : BaseUnityPlugin {
             }
         }
         else {
-            colorChange.dontspamstuffwow2 = 0;
             dontspamstuff = 0;
         }
     }
@@ -218,10 +223,10 @@ public class EigongPrime : BaseUnityPlugin {
             { TeleportToBackLinkStateWeight, new AttackWeight[] { Unsheathe, SlowStart, CrossUp, Pokes, TeleportToTop} },
             { TeleportForwardLinkStateWeight, new AttackWeight[] { CrossUp, Pokes, TeleportToBack} },
             { SlowStartLinkStateWeight, new AttackWeight[] { Foo, Unsheathe, TeleportToTop} },
-            { PokeLinkStateWeight, new AttackWeight[] { Foo, FooGeyser, FooSpike} },
+            { PokeLinkStateWeight, new AttackWeight[] { Foo, FooGeyser, FooSpike, Dunk} },
             { CrossUpLinkStateWeight, new AttackWeight[] { Unsheathe, Foo, TeleportForward } },
             { CrimsonSlamLinkStateWeight, new AttackWeight[] { CrossUp, Pokes, Foo, TeleportToTop, Dunk, TeleportToBack, TeleportForward} },
-            { UnsheatheLinkStateWeight, new AttackWeight[] { Unsheathe, TeleportToTop, Pokes, CrossUp} },
+            { UnsheatheLinkStateWeight, new AttackWeight[] { Unsheathe, TeleportToTop, Pokes, CrossUp, Dunk} },
             { DunkLinkStateWeight, new AttackWeight[] { TeleportToTop, Unsheathe} },
             //Phase 2
             { StunPhase2LinkStateWeight, new AttackWeight[] {QuickFoo, TeleportToTop, FooGeyser, FooSpike, TeleportToBack} },

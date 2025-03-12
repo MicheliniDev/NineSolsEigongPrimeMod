@@ -30,8 +30,8 @@ Then start up the game for it to generate the necessary files and folders. After
 - Pokes can now also chain to Talisman, Talisman Geyser and Talisman Spike.
 - Cross Up can now also chain to Unsheathe, Talisman and Teleport Forward.
 - Crimson Slam can now also chain to Cross Up, Pokes, Talisman, Crimson Slam, Crimson Ball, Teleport To Back and Teleport Forward.
-- Unsheathe can now also chain to Unsheathe, Teleport To Top, Pokes and Cross Up.
-- Crimson Ball can now also chain to Crimson Slam, Unsheathe and Cross Up.
+- Unsheathe can now also chain to Unsheathe, Teleport To Top, Pokes, Cross Up and Crimson Ball.
+- Crimson Ball can now also chain to Crimson Slam, Unsheathe.
 
 ## Phase 2 Moveset changes
 - Stun state can also chain to Quick Talisman, Crimson Slam, Talisman Geyser, Talisman Spike and Teleport To Back.
