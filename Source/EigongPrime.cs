@@ -109,7 +109,7 @@ public class EigongPrime : BaseUnityPlugin {
     }
 
     public void Update() {
-        if (SceneManager.GetActiveScene().name == "A11_S0_Boss_YiGung") {
+        if (SceneManager.GetActiveScene().name == "A11_S0_Boss_YiGung" || SceneManager.GetActiveScene().name == "A11_S0_Boss_YiGung_回蓬萊") {
             colorChange.RecolorSprite();
             EigongHPChange();
             GetAttackGameObjects();

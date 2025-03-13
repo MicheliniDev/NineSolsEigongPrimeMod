@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "Gregorio"
 name = "EigongPrime"
-versionNumber = "1.4.2"
+versionNumber = "1.5.1"
 description = "Mods Eigong to be harder"
 websiteUrl = "https://github.com/MicheliniDev/NineSolsEigongPrimeMod"
 containsNsfwContent = false
