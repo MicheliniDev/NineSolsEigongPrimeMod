@@ -15,9 +15,9 @@ Then start up the game for it to generate the necessary files and folders. After
 # Changes
 
 ## General
-- Phase 1 HP increased from 5000 to 8000.
-- Phase 2 HP increased from 9000 to 16000.
-- Phase 3 HP increased from 5000 to 12000.
+- Phase 1 HP increased from 5000 to 7000.
+- Phase 2 HP increased from 7500 to 14000.
+- Phase 3 HP increased from 5000 to 10500.
 - Phase 1 now has access to the talisman follow ups present in phase 2.
 - Phases 2 and 3 can now chain Pokes like phase 1.
 - Removed the fire trail from forward dashing in phases 2 and 3
@@ -47,9 +47,14 @@ Then start up the game for it to generate the necessary files and folders. After
 
 ## Phase 3 Moveset changes
 - Stun State can also chain to Quick Talisman, Regular Judgement Cut, Talisman Geyser, Talisman Spike, Wind Blade, Teleport Forward and Teleport To Back.
+- Wind Blade can now also cycle through 3 extra moves: Quick Talisman, Teleport To Back and itself.
 - Teleport To Back can now also chain to Unsheathe, Slow Start, Cross Up, Pokes and Regular Judgement Cut.
 - Teleport Forward can now also chain to Cross Up, Pokes and Slow Start.
 - Unsheathe can now also chain Regular Judgement Cut, Teleport To Top, Crimson Ball, Pokes, CrossUp and Slow Start.
 - Crimson Judgement Cut can now also chain to Crimson Judgement Cut, Teleport To Top, Cross Up, Crimson Ball, Talisman Geyser and Taliman Spike. 
 - Regular Judgement Cut can now also chain to Crimson Judgement Cut, Teleport To Top, Cross Up, Crimson Ball, Talisman Geyser and Talisman Spike.
+
+# Random Moveset Generator
+
+This mod also features a random moveset generator accessible by installing BepInExConfigurationManager and checking the "IsRandom" option to true, that will make Eigong's moveset change every time you enter her arena. But make sure you have a good computer before inserting the max move amount to a high value.
 

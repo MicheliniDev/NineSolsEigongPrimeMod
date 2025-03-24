@@ -9,6 +9,14 @@
     {
       "AbsoluteMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|c:\\users\\gregorio\\documents\\eigongprime\\source\\colorchange.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|solutionrelative:source\\colorchange.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|c:\\users\\gregorio\\documents\\eigongprime\\source\\log.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|solutionrelative:source\\log.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|c:\\users\\gregorio\\documents\\eigongprime\\source\\patches.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FC7FF0C4-8F9F-43B9-963F-5C8B3B8920AF}|Source\\EigongPrime.csproj|solutionrelative:source\\patches.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +26,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Log.cs",
+              "DocumentMoniker": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\Log.cs",
+              "RelativeDocumentMoniker": "Source\\Log.cs",
+              "ToolTip": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\Log.cs",
+              "RelativeToolTip": "Source\\Log.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-23T21:11:24.663Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Patches.cs",
+              "DocumentMoniker": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\Patches.cs",
+              "RelativeDocumentMoniker": "Source\\Patches.cs",
+              "ToolTip": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\Patches.cs",
+              "RelativeToolTip": "Source\\Patches.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAqwBEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-21T19:58:18.146Z"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -28,7 +60,7 @@
               "RelativeDocumentMoniker": "Source\\ColorChange.cs",
               "ToolTip": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\ColorChange.cs",
               "RelativeToolTip": "Source\\ColorChange.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAwwCsAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-10T19:21:10.158Z"
             },
@@ -40,7 +72,7 @@
               "RelativeDocumentMoniker": "Source\\EigongPrime.cs",
               "ToolTip": "C:\\Users\\Gregorio\\Documents\\EigongPrime\\Source\\EigongPrime.cs",
               "RelativeToolTip": "Source\\EigongPrime.cs",
-              "ViewState": "AgIAAFwAAAAAAAAAAAAQwHEAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAFwAAAAAAAAAAAAqwHUAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-08T23:31:25.334Z",
               "EditorCaption": ""
