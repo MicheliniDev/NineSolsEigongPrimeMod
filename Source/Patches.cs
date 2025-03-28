@@ -4,6 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using I2.Loc;
+using NineSolsAPI;
 
 namespace EigongPrime;
 

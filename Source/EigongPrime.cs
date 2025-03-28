@@ -8,6 +8,7 @@ using BepInEx.Configuration;
 using UnityEngine.Pool;
 using RCGMaker.Test;
 using System.Linq;
+using System;
 
 namespace EigongPrime;
 
@@ -45,6 +46,7 @@ public class EigongPrime : BaseUnityPlugin {
     LinkNextMoveStateWeight FooCharmLinkStateWeight = null!;
     LinkNextMoveStateWeight CrimsonSlamLinkStateWeight = null!;
     LinkNextMoveStateWeight DunkLinkStateWeight = null!;
+    LinkNextMoveStateWeight WindBladePhase1LinkStateWeight = null!;
 
     //Phase 2 Attacks
     LinkNextMoveStateWeight SlowStartPhase2LinkStateWeight = null!;
@@ -111,8 +113,8 @@ public class EigongPrime : BaseUnityPlugin {
         EigongAnimatorSpeed = Config.Bind("General", "EigongSpeed", 1f, "The speed at which Eigong's attacks occur");
         EigongHPScale = Config.Bind("General", "EigongHPScale", 1f, "The scale for Eigong's HP, 1 is regular HP amount");
         IsRandom = Config.Bind("General", "IsRandom", false, "If true, randomizes Eigong Prime's moveset every time you enter her arena");
-        IsRandomMinimumAttackAmount = Config.Bind("General", "IsRandomMinimumAttackAmount", 1, "The minimum amount of follow ups that can be given to a move when randomized");
-        IsRandomMaximumAttackAmount = Config.Bind("General", "IsRandomMaximumAttackAmount", 6, "The maximum amount of follow ups that can be given to a move when randomized");
+        IsRandomMinimumAttackAmount = Config.Bind("General", "IsRandomMinimumAttackAmount", 1, new ConfigDescription("The minimum amount of follow-ups that can be given to a move when randomized", new AcceptableValueRange<int>(1, 12)));
+        IsRandomMaximumAttackAmount = Config.Bind("General", "IsRandomMaximumAttackAmount", 6, new ConfigDescription("The maximum amount of follow-ups that can be given to a move when randomized", new AcceptableValueRange<int>(1, 12)));
     }
 
     public void Update() {
@@ -229,7 +231,7 @@ public class EigongPrime : BaseUnityPlugin {
 
         #region Assigning attacks
         
-        AttackWeight[] allAttackWeights = [TeleportToTop, TeleportToBack, TeleportForward, SlowStart, CrossUp, Pokes, Unsheathe, Foo, QuickFoo, Dunk, WindBlade, FooGeyser, FooSpike];
+        AttackWeight[] allAttackWeights = [TeleportToTop, TeleportToBack, TeleportForward, SlowStart, CrossUp, Pokes, Unsheathe, Foo, Dunk, WindBlade, FooGeyser, FooSpike];
         LinkNextMoveStateWeight[] allLinkWeights = [
                 StunLinkStateWeight,
                 TeleportToBackLinkStateWeight,
@@ -240,6 +242,7 @@ public class EigongPrime : BaseUnityPlugin {
                 CrimsonSlamLinkStateWeight, 
                 UnsheatheLinkStateWeight, 
                 DunkLinkStateWeight,
+                WindBladePhase1LinkStateWeight,
                 StunPhase2LinkStateWeight, 
                 PokePhase2LinkStateWeight, 
                 TeleportToBackPhase2LinkStateWeight,
@@ -254,7 +257,9 @@ public class EigongPrime : BaseUnityPlugin {
                 TeleportToBackPhase3LinkStateWeight, 
                 TeleportForwardPhase3LinkStateWeight,
                 WindBladePhase3LinkStateWeight,
-                UnsheathePhase3LinkStateWeight
+                UnsheathePhase3LinkStateWeight,
+                JudgementCutLinkStateWeight,
+                RegularJudgementCutLinkStateWeight,
             ];
 
         if (IsRandom.Value == true) {
@@ -263,21 +268,16 @@ public class EigongPrime : BaseUnityPlugin {
             int attackMin = IsRandomMinimumAttackAmount.Value;
             int attackMax = IsRandomMaximumAttackAmount.Value;
 
-            if (attackMax != 0) {
-                foreach (LinkNextMoveStateWeight linkWeight in allLinkWeights) {
-                    linkWeight.stateWeightList.Clear();
+            foreach (LinkNextMoveStateWeight linkWeight in allLinkWeights) {
+                linkWeight.stateWeightList.Clear();
 
-                    int numberOfGivenAttacks = random.Next(attackMin, attackMax + 1);
-                    for (int i = 0; i < numberOfGivenAttacks; i++) {
+                int numberOfGivenAttacks = random.Next(attackMin, attackMax + 1);
+                for (int i = 0; i < numberOfGivenAttacks; i++) {
 
-                        int randomIndex;
-                        AttackWeight chosenAttack;
+                    int randomIndex = random.Next(0, allAttackWeights.Length);
+                    AttackWeight chosenAttack = allAttackWeights[randomIndex];
 
-                        do {
-                            randomIndex = random.Next(0, allAttackWeights.Length);
-                            chosenAttack = allAttackWeights[randomIndex];
-                        } while (linkWeight.stateWeightList.Contains(chosenAttack)); // Avoid repeats
-
+                    if (!linkWeight.stateWeightList.Contains(chosenAttack)) {
                         linkWeight.stateWeightList.Add(chosenAttack);
                     }
                 }
@@ -287,7 +287,7 @@ public class EigongPrime : BaseUnityPlugin {
             var AttackAssignments = new Dictionary<LinkNextMoveStateWeight, AttackWeight[]> {
                 //Phase 1
                 { StunLinkStateWeight, new AttackWeight[] {TeleportToBack, TeleportToTop, Unsheathe} },
-                { TeleportToBackLinkStateWeight, new AttackWeight[] { Unsheathe, SlowStart, CrossUp, Pokes, TeleportToTop} },
+                { TeleportToBackLinkStateWeight, new AttackWeight[] { Unsheathe, SlowStart, CrossUp, Pokes, TeleportToTop, TeleportToBack} },
                 { TeleportForwardLinkStateWeight, new AttackWeight[] { CrossUp, Pokes, TeleportToBack} },
                 { SlowStartLinkStateWeight, new AttackWeight[] { Foo, Unsheathe, TeleportToTop} },
                 { PokeLinkStateWeight, new AttackWeight[] { Foo, FooGeyser, FooSpike, Dunk} },
@@ -322,7 +322,6 @@ public class EigongPrime : BaseUnityPlugin {
                 foreach (AttackWeight attack in attacks) {
                     if (!linkWeight.stateWeightList.Contains(attack)) {
                         linkWeight.stateWeightList.Add(attack);
-                        Logger.LogInfo($"Added {attack.state} to {linkWeight.transform.parent.gameObject.name}");
                     }
                 }
             }
@@ -359,6 +358,7 @@ public class EigongPrime : BaseUnityPlugin {
         FooCharmLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[10] Danger Foo Grab/interrupt weight").GetComponent<LinkNextMoveStateWeight>();
         CrimsonSlamLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[17] DownAttack Danger 空中下危/weight").GetComponent<LinkNextMoveStateWeight>();
         DunkLinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[14] FooExplode Smash 下砸紅球/phase0 (1)").GetComponent<LinkNextMoveStateWeight>();
+        WindBladePhase1LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[11] GiantChargeWave 紅白白紅/weight (1)").GetComponent<LinkNextMoveStateWeight>();
 
         //Phase 2 Attacks
         SlowStartPhase2LinkStateWeight = GameObject.Find($"{eigongAttackStatesPath}[1] Starter  Slow Attack 慢刀前揮/phase (1)").GetComponent<LinkNextMoveStateWeight>();

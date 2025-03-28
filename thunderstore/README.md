@@ -24,7 +24,7 @@ Then start up the game for it to generate the necessary files and folders. After
 
 ## Phase 1 Moveset changes
 - Stun state can also chain to Teleport To Back, Crimson Slam and Unsheathe.
-- Teleport To Back can now also chain to Unsheathe, Slow Start, Cross Up, Pokes and Crimson Slam.
+- Teleport To Back can now also chain to Unsheathe, Slow Start, Cross Up, Pokes, Crimson Slam and itself.
 - Teleport Forward can now also chain to Cross Up, Pokes and Teleport To Back.
 - Slow Start can now also chain to Talisman, Unsheathe and Crimson Slam.
 - Pokes can now also chain to Talisman, Talisman Geyser and Talisman Spike.
@@ -43,7 +43,7 @@ Then start up the game for it to generate the necessary files and folders. After
 - Cross Up can now also chain to Unsheathe, Talisman, Teleport To Back, Teleport Forward and TalismanSpike.
 - Crimson Slam can now also chain to Cross Up, Pokes, Teleport To Top, Crimson Ball, Teleport To Back, Teleport Forward, Talisman Geyser, Talisman Spike and Wind Blade.
 - Talisman Geyser can now also chain to Crimson Slam, Teleport To Top, Unsheathe, Quick Talisman, Talisman Geyser and Talisman Spike.
-- Unsheathe can now also chain to Unsheathe, TeleportToTop, Crimson Ball, Pokes, CrossUp, Talisman Geyser and Talisman Spike.
+- Unsheathe can now also chain to Unsheathe, Teleport To Top, Crimson Ball, Pokes, CrossUp, Talisman Geyser and Talisman Spike.
 
 ## Phase 3 Moveset changes
 - Stun State can also chain to Quick Talisman, Regular Judgement Cut, Talisman Geyser, Talisman Spike, Wind Blade, Teleport Forward and Teleport To Back.
@@ -56,5 +56,5 @@ Then start up the game for it to generate the necessary files and folders. After
 
 # Random Moveset Generator
 
-This mod also features a random moveset generator accessible by installing BepInExConfigurationManager and checking the "IsRandom" option to true, that will make Eigong's moveset change every time you enter her arena. But make sure you have a good computer before inserting the max move amount to a high value.
+This mod also features a random moveset generator accessible by installing BepInExConfigurationManager and checking the "IsRandom" option to true, that will make Eigong's moveset change every time you enter her arena.
 
