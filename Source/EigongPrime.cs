@@ -102,6 +102,8 @@ public class EigongPrime : BaseUnityPlugin {
     private ConfigEntry<bool> IsRandom = null!;
     private ConfigEntry<int> IsRandomMinimumAttackAmount = null!;
     private ConfigEntry<int> IsRandomMaximumAttackAmount = null!;
+
+    private bool hasRandomLoopRan = false;
     public void Awake() {
         Log.Init(Logger);
         RCGLifeCycle.DontDestroyForever(gameObject);
@@ -132,12 +134,13 @@ public class EigongPrime : BaseUnityPlugin {
                 fireTrail.SetActive(true);
             }
 
-            Player.i.PlayerDeadState.OnReviveEvent.AddListener(ResetColorChange);
+            Player.i.PlayerDeadState.OnReviveEvent.AddListener(ResetFlags);
         }
     }
 
-    public void ResetColorChange() {
+    public void ResetFlags() {
         colorChange.dontspamstuffwow2 = 0;
+        hasRandomLoopRan = false;
     }
 
     private void EigongHPChange() {
@@ -262,12 +265,13 @@ public class EigongPrime : BaseUnityPlugin {
                 RegularJudgementCutLinkStateWeight,
             ];
 
-        if (IsRandom.Value == true) {
+        if (IsRandom.Value == true && !hasRandomLoopRan) {
             System.Random random = new System.Random();
 
             int attackMin = IsRandomMinimumAttackAmount.Value;
             int attackMax = IsRandomMaximumAttackAmount.Value;
 
+            hasRandomLoopRan = true;
             foreach (LinkNextMoveStateWeight linkWeight in allLinkWeights) {
                 linkWeight.stateWeightList.Clear();
 
