@@ -5,10 +5,7 @@ using NineSolsAPI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using BepInEx.Configuration;
-using UnityEngine.Pool;
-using RCGMaker.Test;
-using System.Linq;
-using System;
+using System.Collections;
 
 namespace EigongPrime;
 
@@ -102,8 +99,17 @@ public class EigongPrime : BaseUnityPlugin {
     private ConfigEntry<bool> IsRandom = null!;
     private ConfigEntry<int> IsRandomMinimumAttackAmount = null!;
     private ConfigEntry<int> IsRandomMaximumAttackAmount = null!;
+    private ConfigEntry<bool> EnableBackGroundChange = null!;
+    private ConfigEntry<bool> EnableBetaYiTheme = null!;
 
     private bool hasRandomLoopRan = false;
+
+    public static GameObject Black = null!;
+    public static GameObject Blue = null!;
+    public static GameObject Red = null!;
+    public static GameObject Green = null!;
+
+    private AmbienceSource BGM = null!;
     public void Awake() {
         Log.Init(Logger);
         RCGLifeCycle.DontDestroyForever(gameObject);
@@ -117,12 +123,16 @@ public class EigongPrime : BaseUnityPlugin {
         IsRandom = Config.Bind("General", "IsRandom", false, "If true, randomizes Eigong Prime's moveset every time you enter her arena");
         IsRandomMinimumAttackAmount = Config.Bind("General", "IsRandomMinimumAttackAmount", 1, new ConfigDescription("The minimum amount of follow-ups that can be given to a move when randomized", new AcceptableValueRange<int>(1, 12)));
         IsRandomMaximumAttackAmount = Config.Bind("General", "IsRandomMaximumAttackAmount", 6, new ConfigDescription("The maximum amount of follow-ups that can be given to a move when randomized", new AcceptableValueRange<int>(1, 12)));
+        EnableBackGroundChange = Config.Bind("General", "EnableBackgroundChange", true, "If enabled, Eigong's background will change according to the fight's progress");
+        EnableBetaYiTheme = Config.Bind("General", "EnableBetaYiTheme", true, "If enabled, Yi's theme will be swapped with the beta version");
     }
 
     public void Update() {
         if (SceneManager.GetActiveScene().name == "A11_S0_Boss_YiGung" || SceneManager.GetActiveScene().name == "A11_S0_Boss_YiGung_回蓬萊") {
             colorChange.RecolorSprite();
             EigongHPChange();
+            HandleBGM();
+            HandleBackground();
             GetAttackGameObjects();
             AlterAttacks();
 
@@ -136,11 +146,59 @@ public class EigongPrime : BaseUnityPlugin {
 
             Player.i.PlayerDeadState.OnReviveEvent.AddListener(ResetFlags);
         }
+        if (ApplicationCore.IsInBossMemoryMode && MonsterManager.Instance.ClosetMonster == null) {
+            ResetFlags();
+        }
     }
 
     public void ResetFlags() {
         colorChange.dontspamstuffwow2 = 0;
         hasRandomLoopRan = false;
+    }
+
+    private void HandleBGM() {
+        if (EnableBetaYiTheme.Value) {
+            BGM = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/Boss三階BGM/BGM_Boss_A11_P3").GetComponent<AmbienceSource>();
+            BGM.ambPair.sound = "BGM_Boss_A11_P2";
+
+            if (MonsterManager.Instance.ClosetMonster.currentMonsterState == MonsterManager.Instance.ClosetMonster.GetState(MonsterBase.States.FooStunEnter) && MonsterManager.Instance.ClosetMonster.PhaseIndex == 1) {
+                StartCoroutine(PlaySongAfterTime(5f));
+                if (Player.i.health.CurrentHealthValue <= 0f) StopAllCoroutines();
+            }
+        }
+    }
+
+    private IEnumerator PlaySongAfterTime(float time) {
+        yield return new WaitForSeconds(time);
+        BGM.Play();
+    }
+
+    private void HandleBackground() {
+        if (EnableBackGroundChange.Value) {
+            if (MonsterManager.Instance.ClosetMonster == null) return;
+            Black = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Black");
+            Blue = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Blue");
+            Red = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Red");
+            Green = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Green");
+
+            switch (MonsterManager.Instance.ClosetMonster.PhaseIndex) {
+                case 0:
+                    Black.SetActive(false);
+                    Blue.SetActive(false);
+                    Red.SetActive(false);
+                    Green.SetActive(false);
+                    break;
+                case 1:
+                    Blue.SetActive(true);
+                    Green.SetActive(true);
+                    break;
+                case 2:
+                    Blue.SetActive(false);
+                    Green.SetActive(false);
+                    Red.SetActive(true);
+                    break;
+            }
+        }
     }
 
     private void EigongHPChange() {

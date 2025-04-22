@@ -58,3 +58,13 @@ Then start up the game for it to generate the necessary files and folders. After
 
 This mod also features a random moveset generator accessible by installing BepInExConfigurationManager and checking the "IsRandom" option to true, that will make Eigong's moveset change every time you enter her arena.
 
+# Background Changer
+
+By default, Eigong's fight background will change according to her phase number, this can be disabled using BepInExConfigurationManager.
+
+
+# The Path For Us All
+
+By default, Yi's theme will be replaced by a beta version, this can also be disabled using BepInExConfigurationManager.
+
+The default volume for it is quite low, so it's recommended to decrease SFX Volume and increase Music Volume (and maybe computer volume) to properly enjoy it.

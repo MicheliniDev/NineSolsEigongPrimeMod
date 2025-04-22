@@ -1,10 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using HarmonyLib;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using HarmonyLib;
 using I2.Loc;
-using NineSolsAPI;
 
 namespace EigongPrime;
 
