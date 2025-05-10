@@ -104,10 +104,11 @@ public class EigongPrime : BaseUnityPlugin {
 
     private bool hasRandomLoopRan = false;
 
-    public static GameObject Black = null!;
-    public static GameObject Blue = null!;
-    public static GameObject Red = null!;
-    public static GameObject Green = null!;
+    public static SpriteRenderer Black = null!;
+    public static SpriteRenderer Black2 = null!;
+    public static SpriteRenderer Blue = null!;
+    public static SpriteRenderer Red = null!;
+    public static SpriteRenderer Green = null!;
 
     private AmbienceSource BGM = null!;
     public void Awake() {
@@ -176,26 +177,30 @@ public class EigongPrime : BaseUnityPlugin {
     private void HandleBackground() {
         if (EnableBackGroundChange.Value) {
             if (MonsterManager.Instance.ClosetMonster == null) return;
-            Black = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Black");
-            Blue = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Blue");
-            Red = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Red");
-            Green = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Green");
+            Black = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Black").GetComponent<SpriteRenderer>();
+            Black2 = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Black/Black (1)").GetComponent<SpriteRenderer>();
+            Blue = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Blue").GetComponent<SpriteRenderer>();
+            Red = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Red").GetComponent<SpriteRenderer>();
+            Green = GameObject.Find("GameLevel/CameraCore/DockObj/全畫面遮色/Fade/Green").GetComponent<SpriteRenderer>();
 
-            switch (MonsterManager.Instance.ClosetMonster.PhaseIndex) {
-                case 0:
-                    Black.SetActive(false);
-                    Blue.SetActive(false);
-                    Red.SetActive(false);
-                    Green.SetActive(false);
+            switch (MonsterManager.Instance.ClosetMonster.CurrentState) {
+                case MonsterBase.States.PreAttack:
+                    if (MonsterManager.Instance.ClosetMonster.PhaseIndex == 0) {
+                        StartCoroutine(FadeSpriteOut(Black, 1f));
+                        StartCoroutine(FadeSpriteOut(Black2, 1f));
+                        StartCoroutine(FadeSpriteOut(Blue, 1f));
+                        StartCoroutine(FadeSpriteOut(Red, 1f));
+                        StartCoroutine(FadeSpriteOut(Green, 1f));
+                    }
                     break;
-                case 1:
-                    Blue.SetActive(true);
-                    Green.SetActive(true);
+                case MonsterBase.States.BossAngry:
+                    StartCoroutine(FadeSpriteIn(Blue, 5f));
+                    StartCoroutine(FadeSpriteIn(Green, 6f));
                     break;
-                case 2:
-                    Blue.SetActive(false);
-                    Green.SetActive(false);
-                    Red.SetActive(true);
+                case MonsterBase.States.FooStunEnter:
+                    StartCoroutine(FadeSpriteIn(Red, 10f));
+                    StartCoroutine(FadeSpriteOut(Blue, 6f));
+                    StartCoroutine(FadeSpriteOut(Green, 8f));
                     break;
             }
         }
@@ -476,6 +481,40 @@ public class EigongPrime : BaseUnityPlugin {
         fireTrail = GameObject.Find("GameLevel/Room/Prefab/EventBinder/General Boss Fight FSM Object Variant/FSM Animator/LogicRoot/---Boss---/Boss_Yi Gung/MonsterCore/Animator(Proxy)/Animator/LogicRoot/Phase1 Activator/FireFX _ Fxplayer");
     }
     #endregion
+
+    public static IEnumerator FadeSpriteOut(SpriteRenderer spriteRenderer, float duration) {
+        if (spriteRenderer == null || duration <= 0f) yield break;
+
+        Color originalColor = spriteRenderer.material.color;
+        float startAlpha = originalColor.a;
+        float elapsed = 0f;
+
+        while (elapsed < duration) {
+            elapsed += Time.deltaTime;
+            float newAlpha = Mathf.Lerp(startAlpha, 0f, elapsed / duration);
+            spriteRenderer.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, newAlpha);
+            yield return null;
+        }
+
+        spriteRenderer.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+    }
+
+    public static IEnumerator FadeSpriteIn(SpriteRenderer spriteRenderer, float duration) {
+        if (spriteRenderer == null || duration <= 0f) yield break;
+
+        Color originalColor = spriteRenderer.material.color;
+        originalColor.a = 1f;
+        float elapsed = 0f;
+
+        while (elapsed < duration) {
+            elapsed += Time.deltaTime;
+            float newAlpha = Mathf.Lerp(0f, originalColor.a, elapsed / duration);
+            spriteRenderer.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, newAlpha);
+            yield return null;
+        }
+
+        spriteRenderer.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
+    }
 
     public void OnDestroy() {
         harmony.UnpatchSelf();
