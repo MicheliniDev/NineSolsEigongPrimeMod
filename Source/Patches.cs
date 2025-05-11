@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using I2.Loc;
+using NineSolsAPI;
 
 namespace EigongPrime;
 
@@ -9,6 +10,6 @@ public class Patches {
     [HarmonyPatch(typeof(LocalizationManager), nameof(LocalizationManager.GetTranslation))]
     private static void EigongPrimeNameChange(string Term, ref string __result) {
         if (Term != "Characters/NameTag_YiKong") return;
-        __result = "Eigong Prime";
+        __result =$"{__result} Prime";
     }
 }
