@@ -210,7 +210,8 @@ public class EigongPrime : BaseUnityPlugin {
         var baseHealthRef = AccessTools.FieldRefAccess<MonsterStat, float>("BaseHealthValue");
         baseHealthRef(MonsterManager.Instance.ClosetMonster.monsterStat) = 7000f * EigongHPScale.Value;
         if (dontspamstuffwow == 0 && MonsterManager.Instance.ClosetMonster != null) {
-            MonsterManager.Instance.ClosetMonster.health.GainFull();
+            if (ApplicationCore.IsInBossMemoryMode) MonsterManager.Instance.ClosetMonster.postureSystem.CurrentHealthValue = 8000f * EigongHPScale.Value * MonsterManager.Instance.ClosetMonster.monsterCore.monsterBase.monsterStat.BossMemoryHealthScale;
+            else MonsterManager.Instance.ClosetMonster.postureSystem.CurrentHealthValue = 8000f * EigongHPScale.Value;
 
             if (EigongHPScale.Value != 1f) ToastManager.Toast($"Eigong's base HP changed to {7000f * EigongHPScale.Value}");
             dontspamstuffwow++;
